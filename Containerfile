@@ -15,6 +15,10 @@ RUN --mount=type=cache,target=/var/cache/dnf --mount=type=tmpfs,target=/run \
     # This line ensures the script exits immediately if a command fails.
     set -euxo pipefail && \
     \
+    # Fix DNS issues in GitHub Actions by backing up and temporarily replacing resolv.conf
+    mv /etc/resolv.conf /etc/resolv.conf.bak && \
+    echo "nameserver 8.8.8.8" > /etc/resolv.conf && \
+    \
     # --- Enable RPM Fusion Repositories --- \
     dnf install -y https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm && \
     \
@@ -141,6 +145,9 @@ RUN --mount=type=cache,target=/var/cache/dnf --mount=type=tmpfs,target=/run \
     # Clean up metadata and temporary files to keep the final image size smaller.
     # We exclude cache mounts from deletion to avoid "Device or resource busy" errors.
     find /var/cache -mindepth 1 -maxdepth 1 ! -name dnf ! -name libdnf5 -exec rm -rf {} + && \
-    rm -rf /var/tmp/*
+    rm -rf /var/tmp/* && \
+    \
+    # Restore original resolv.conf
+    mv /etc/resolv.conf.bak /etc/resolv.conf
 
 # The CMD instruction is inherited from the base image, so we don't need to set it.
