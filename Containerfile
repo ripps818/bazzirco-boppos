@@ -3,7 +3,7 @@
 # Use the bazzirco-dx image as our base.
 # Using a specific tag like :latest is common, but pinning to a specific
 # version (e.g., :20240501) gives you more reproducible builds.
-FROM ghcr.io/bazzirco/bazzirco-dxs:latest
+FROM ghcr.io/bazzirco/bazzirco-dx:latest
 
 # Add some standard labels to your image for better metadata.
 # You can point this to your own GitHub repository where you store this file.
