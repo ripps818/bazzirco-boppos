@@ -26,6 +26,11 @@ jobs:
             -t ghcr.io/${{ github.repository }}:latest \
             -f ./Containerfile .
 
+      - name: Rechunk image
+        uses: hhd-dev/rechunk@v0.8.1
+        with:
+          ref: ghcr.io/${{ github.repository }}:latest
+
       - name: Login to GitHub Container Registry
         run: |
           echo "${{ secrets.GITHUB_TOKEN }}" | podman login ghcr.io -u ${{ github.actor }} --password-stdin
@@ -33,9 +38,3 @@ jobs:
       - name: Push image
         run: |
           podman push ghcr.io/${{ github.repository }}:latest
-
-      - name: Rechunk image
-        uses: hhd-dev/rechunk@v0.8.1
-        with:
-          image: ghcr.io/${{ github.repository }}:latest
-          output-image: ghcr.io/${{ github.repository }}:latest
